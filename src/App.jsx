@@ -91,7 +91,6 @@ function App() {
         {step === 1 && (
           <section className="section">
             <div className="section-header">
-              <span className="step-badge">Step 1 of 3</span>
               <h1>What industry is your business in?</h1>
               <p>Select the industry that best describes your business</p>
             </div>
@@ -116,7 +115,6 @@ function App() {
               <button className="back-btn" onClick={handleBack}>
                 ← Back
               </button>
-              <span className="step-badge">Step 2 of 3</span>
               <h1>What will your agent help with?</h1>
               <p>Select the primary use case for your AI voice agent</p>
               <div className="selected-tag">
@@ -144,7 +142,6 @@ function App() {
               <button className="back-btn" onClick={handleBack}>
                 ← Back
               </button>
-              <span className="step-badge">Step 3 of 3</span>
               <h1>Ready to experience the future?</h1>
               <p>Start a call with your AI voice agent</p>
               <div className="selected-tags">
