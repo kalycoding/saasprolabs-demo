@@ -3,36 +3,59 @@ import { useConversation } from '@elevenlabs/react'
 import './App.css'
 
 const industries = [
-  { id: 'retail', label: 'Retail & E-commerce', icon: '🛒' },
-  { id: 'healthcare', label: 'Healthcare & Medical', icon: '🏥' },
-  { id: 'finance', label: 'Finance & Banking', icon: '🏦' },
-  { id: 'realestate', label: 'Real Estate', icon: '🏠' },
-  { id: 'hospitality', label: 'Hospitality & Travel', icon: '✈️' },
-  { id: 'restaurant', label: 'Restaurant & Food', icon: '🍽️' },
-  { id: 'automotive', label: 'Automotive', icon: '🚗' },
-  { id: 'government', label: 'Government & Public', icon: '🏛️' },
-]
-
-const useCases = [
-  { id: 'support', label: 'Customer Support', icon: '🎧' },
-  { id: 'sales', label: 'Outbound Sales', icon: '📞' },
-  { id: 'learning', label: 'Learning and Development', icon: '📚' },
-  { id: 'scheduling', label: 'Scheduling', icon: '📅' },
-  { id: 'leadqual', label: 'Lead Qualification', icon: '🎯' },
-  { id: 'answering', label: 'Answering Service', icon: '📱' },
-  { id: 'account', label: 'Account Inquiries', icon: '👤' },
-  { id: 'loan', label: 'Loan Applications', icon: '💳' },
-  { id: 'fraud', label: 'Fraud Alerts', icon: '🚨' },
-  { id: 'investment', label: 'Investment Guidance', icon: '📈' },
-  { id: 'billpay', label: 'Bill Payment Support', icon: '💵' },
-  { id: 'planning', label: 'Financial Planning', icon: '🗂️' },
-  { id: 'other', label: 'Other', icon: '✨' },
+  { 
+    id: 'retail', 
+    label: 'Retail & E-commerce', 
+    icon: '🛒',
+    capabilities: ['Order tracking', 'Product inquiries', 'Returns & refunds', 'Store availability']
+  },
+  { 
+    id: 'healthcare', 
+    label: 'Healthcare & Medical', 
+    icon: '🏥',
+    capabilities: ['Appointment scheduling', 'Prescription refills', 'Insurance questions', 'Lab results']
+  },
+  { 
+    id: 'finance', 
+    label: 'Finance & Banking', 
+    icon: '🏦',
+    capabilities: ['Account inquiries', 'Transaction history', 'Loan applications', 'Fraud alerts']
+  },
+  { 
+    id: 'realestate', 
+    label: 'Real Estate', 
+    icon: '🏠',
+    capabilities: ['Property inquiries', 'Schedule viewings', 'Price negotiations', 'Mortgage info']
+  },
+  { 
+    id: 'hospitality', 
+    label: 'Hospitality & Travel', 
+    icon: '✈️',
+    capabilities: ['Room bookings', 'Flight changes', 'Concierge services', 'Loyalty rewards']
+  },
+  { 
+    id: 'restaurant', 
+    label: 'Restaurant & Food', 
+    icon: '🍽️',
+    capabilities: ['Table reservations', 'Takeout orders', 'Menu questions', 'Delivery tracking']
+  },
+  { 
+    id: 'automotive', 
+    label: 'Automotive', 
+    icon: '🚗',
+    capabilities: ['Service appointments', 'Parts availability', 'Test drive booking', 'Warranty claims']
+  },
+  { 
+    id: 'government', 
+    label: 'Government & Public', 
+    icon: '🏛️',
+    capabilities: ['Permit applications', 'Service inquiries', 'Appointment booking', 'Document status']
+  },
 ]
 
 function App() {
   const [step, setStep] = useState(1)
   const [selectedIndustry, setSelectedIndustry] = useState(null)
-  const [selectedUseCase, setSelectedUseCase] = useState(null)
 
   const conversation = useConversation({
     onConnect: () => console.log('Connected'),
@@ -46,16 +69,6 @@ function App() {
   const isConnected = status === 'connected' || status === 'speaking' || status === 'listening'
   const isConnecting = status === 'connecting'
 
-  const handleIndustrySelect = (industry) => {
-    setSelectedIndustry(industry)
-    setStep(2)
-  }
-
-  const handleUseCaseSelect = (useCase) => {
-    setSelectedUseCase(useCase)
-    setStep(3)
-  }
-
   const getAgentId = () => {
     // Industry-specific agents
     if (selectedIndustry?.id === 'hospitality') {
@@ -63,6 +76,11 @@ function App() {
     }
     // Default agent
     return 'agent_5601kqng0fntehg9tkpp5n8p95mv'
+  }
+
+  const handleIndustrySelect = (industry) => {
+    setSelectedIndustry(industry)
+    setStep(2)
   }
 
   const handleStartCall = async () => {
@@ -79,17 +97,11 @@ function App() {
     await endSession()
     setStep(1)
     setSelectedIndustry(null)
-    setSelectedUseCase(null)
   }
 
   const handleBack = () => {
-    if (step === 2) {
-      setStep(1)
-      setSelectedIndustry(null)
-    } else if (step === 3) {
-      setStep(2)
-      setSelectedUseCase(null)
-    }
+    setStep(1)
+    setSelectedIndustry(null)
   }
 
   return (
@@ -125,33 +137,6 @@ function App() {
         )}
 
         {step === 2 && !isConnected && !isConnecting && (
-          <section className="section">
-            <div className="section-header">
-              <button className="back-btn" onClick={handleBack}>
-                ← Back
-              </button>
-              <h1>What will your agent help with?</h1>
-              <p>Select the primary use case for your AI voice agent</p>
-              <div className="selected-tag">
-                {selectedIndustry?.icon} {selectedIndustry?.label}
-              </div>
-            </div>
-            <div className="grid">
-              {useCases.map((useCase) => (
-                <button
-                  key={useCase.id}
-                  className="card"
-                  onClick={() => handleUseCaseSelect(useCase)}
-                >
-                  <span className="card-icon">{useCase.icon}</span>
-                  <span className="card-label">{useCase.label}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {step === 3 && !isConnected && !isConnecting && (
           <section className="section section-centered">
             <div className="section-header">
               <button className="back-btn" onClick={handleBack}>
@@ -159,15 +144,20 @@ function App() {
               </button>
               <h1>Ready to experience the future?</h1>
               <p>Start a call with your AI voice agent</p>
-              <div className="selected-tags">
-                <div className="selected-tag">
-                  {selectedIndustry?.icon} {selectedIndustry?.label}
-                </div>
-                <div className="selected-tag">
-                  {selectedUseCase?.icon} {selectedUseCase?.label}
-                </div>
+              <div className="selected-tag">
+                {selectedIndustry?.icon} {selectedIndustry?.label}
               </div>
             </div>
+            
+            <div className="capabilities">
+              <p className="capabilities-title">This AI agent can help with:</p>
+              <div className="capabilities-list">
+                {selectedIndustry?.capabilities.map((cap, index) => (
+                  <span key={index} className="capability-chip">{cap}</span>
+                ))}
+              </div>
+            </div>
+
             <button className="start-call-btn" onClick={handleStartCall}>
               <span className="call-icon">📞</span>
               Start Call
@@ -210,7 +200,7 @@ function App() {
               <h2>{isSpeaking ? 'Agent Speaking...' : 'Listening...'}</h2>
               <p>Speaking with your {selectedIndustry?.label} AI Agent</p>
               <div className="call-info">
-                <span>{selectedUseCase?.icon} {selectedUseCase?.label}</span>
+                <span>{selectedIndustry?.icon} {selectedIndustry?.label}</span>
               </div>
               <button className="end-call-btn" onClick={handleEndCall}>
                 End Call

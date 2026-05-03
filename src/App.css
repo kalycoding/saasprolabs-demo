@@ -511,6 +511,37 @@ body {
   color: var(--color-cool-gray);
 }
 
+/* Capabilities */
+.capabilities {
+  margin: 24px 0 32px;
+  text-align: center;
+}
+
+.capabilities-title {
+  font-size: 14px;
+  color: var(--color-cool-gray);
+  margin-bottom: 12px;
+}
+
+.capabilities-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.capability-chip {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--color-primary);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(99, 102, 241, 0.2);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .nav {
