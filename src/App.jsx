@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useConversation } from '@elevenlabs/react'
 import './App.css'
 
 const industries = [
@@ -6,19 +7,9 @@ const industries = [
   { id: 'healthcare', label: 'Healthcare & Medical', icon: '🏥' },
   { id: 'finance', label: 'Finance & Banking', icon: '🏦' },
   { id: 'realestate', label: 'Real Estate', icon: '🏠' },
-  { id: 'education', label: 'Education & Training', icon: '🎓' },
   { id: 'hospitality', label: 'Hospitality & Travel', icon: '✈️' },
   { id: 'automotive', label: 'Automotive', icon: '🚗' },
-  { id: 'professional', label: 'Professional Services', icon: '💼' },
-  { id: 'technology', label: 'Technology & Software', icon: '💻' },
   { id: 'government', label: 'Government & Public', icon: '🏛️' },
-  { id: 'food', label: 'Food & Beverage', icon: '🍽️' },
-  { id: 'manufacturing', label: 'Manufacturing', icon: '🏭' },
-  { id: 'fitness', label: 'Fitness & Wellness', icon: '💪' },
-  { id: 'legal', label: 'Legal Services', icon: '⚖️' },
-  { id: 'nonprofit', label: 'Non-Profit', icon: '❤️' },
-  { id: 'media', label: 'Media & Entertainment', icon: '🎬' },
-  { id: 'other', label: 'Other', icon: '📦' },
 ]
 
 const useCases = [
@@ -41,7 +32,18 @@ function App() {
   const [step, setStep] = useState(1)
   const [selectedIndustry, setSelectedIndustry] = useState(null)
   const [selectedUseCase, setSelectedUseCase] = useState(null)
-  const [isCallActive, setIsCallActive] = useState(false)
+
+  const conversation = useConversation({
+    onConnect: () => console.log('Connected'),
+    onDisconnect: () => console.log('Disconnected'),
+    onError: (error) => console.error('Error:', error),
+    onModeChange: (mode) => console.log('Mode changed:', mode),
+  })
+
+  const { status, startSession, endSession } = conversation
+  const isSpeaking = status === 'speaking'
+  const isConnected = status === 'connected' || status === 'speaking' || status === 'listening'
+  const isConnecting = status === 'connecting'
 
   const handleIndustrySelect = (industry) => {
     setSelectedIndustry(industry)
@@ -53,15 +55,27 @@ function App() {
     setStep(3)
   }
 
-  const handleStartCall = () => {
-    setIsCallActive(true)
-    // TODO: Integrate ElevenLabs Conversational AI here
-    // const agentId = getAgentId(selectedIndustry, selectedUseCase)
-    // startElevenLabsCall(agentId)
+  const getAgentId = () => {
+    // Industry-specific agents
+    if (selectedIndustry?.id === 'hospitality') {
+      return 'agent_5101kqnqdch4etvvqs0sv5p4b04p'
+    }
+    // Default agent
+    return 'agent_5601kqng0fntehg9tkpp5n8p95mv'
   }
 
-  const handleEndCall = () => {
-    setIsCallActive(false)
+  const handleStartCall = async () => {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true })
+      await startSession({ agentId: getAgentId() })
+    } catch (err) {
+      console.error('Failed to start call:', err)
+      alert('Failed to start call. Please allow microphone access.')
+    }
+  }
+
+  const handleEndCall = async () => {
+    await endSession()
     setStep(1)
     setSelectedIndustry(null)
     setSelectedUseCase(null)
@@ -88,7 +102,7 @@ function App() {
       </nav>
 
       <main className="main">
-        {step === 1 && (
+        {step === 1 && !isConnected && !isConnecting && (
           <section className="section">
             <div className="section-header">
               <h1>What industry is your business in?</h1>
@@ -109,7 +123,7 @@ function App() {
           </section>
         )}
 
-        {step === 2 && (
+        {step === 2 && !isConnected && !isConnecting && (
           <section className="section">
             <div className="section-header">
               <button className="back-btn" onClick={handleBack}>
@@ -136,7 +150,7 @@ function App() {
           </section>
         )}
 
-        {step === 3 && !isCallActive && (
+        {step === 3 && !isConnected && !isConnecting && (
           <section className="section section-centered">
             <div className="section-header">
               <button className="back-btn" onClick={handleBack}>
@@ -161,14 +175,23 @@ function App() {
           </section>
         )}
 
-        {isCallActive && (
+        {isConnecting && (
+          <section className="section section-centered">
+            <div className="call-active">
+              <div className="connecting-spinner"></div>
+              <h2>Connecting...</h2>
+              <p>Setting up your AI voice agent</p>
+            </div>
+          </section>
+        )}
+
+        {isConnected && (
           <section className="section section-centered">
             <div className="call-active">
               <div className="call-pulse"></div>
-              <div className="call-avatar">🤖</div>
+              <div className={`call-avatar ${isSpeaking ? 'speaking' : ''}`}>🤖</div>
               
-              {/* Audio Wave Visualizer */}
-              <div className="wave-container">
+              <div className={`wave-container ${isSpeaking ? 'active' : ''}`}>
                 <div className="wave-bar"></div>
                 <div className="wave-bar"></div>
                 <div className="wave-bar"></div>
@@ -183,7 +206,7 @@ function App() {
                 <div className="wave-bar"></div>
               </div>
               
-              <h2>Call in Progress</h2>
+              <h2>{isSpeaking ? 'Agent Speaking...' : 'Listening...'}</h2>
               <p>Speaking with your {selectedIndustry?.label} AI Agent</p>
               <div className="call-info">
                 <span>{selectedUseCase?.icon} {selectedUseCase?.label}</span>
