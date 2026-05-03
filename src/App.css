@@ -71,22 +71,10 @@ body {
   color: var(--color-slate-ink);
 }
 
-.brand-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: var(--color-slate-ink);
-  position: relative;
-  display: grid;
-  place-items: center;
-}
-
-.brand-mark::before {
-  content: "";
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--color-sunburst);
+.brand-logo {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
   box-shadow: 0 0 0 3px var(--color-slate-ink), 0 0 0 5px rgba(252, 180, 42, 0.4);
 }
 
