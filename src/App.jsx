@@ -8,6 +8,7 @@ const industries = [
   { id: 'finance', label: 'Finance & Banking', icon: '🏦' },
   { id: 'realestate', label: 'Real Estate', icon: '🏠' },
   { id: 'hospitality', label: 'Hospitality & Travel', icon: '✈️' },
+  { id: 'restaurant', label: 'Restaurant & Food', icon: '🍽️' },
   { id: 'automotive', label: 'Automotive', icon: '🚗' },
   { id: 'government', label: 'Government & Public', icon: '🏛️' },
 ]
